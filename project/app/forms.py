@@ -6,6 +6,13 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'email', 'password']
         widgets = {'password': forms.PasswordInput}
+        help_texts = {'password': 'password must contain 1 number (0-9), password must contain 1 uppercase letters, password must contain 1 lowercase letters, password must contain 1 non-alpha numeric number, password is 8-16 characters with no space'}
+    def clean_password(self):
+        pw = self.cleaned_data.get('password')
+        if re.match(r'^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$', pw):
+            return pw
+        raise forms.ValidationError('invalid Password')
+    
 class InfoForm(forms.ModelForm):
     class Meta:
         model = Info
